@@ -22,9 +22,9 @@ public class Main {
             String filePath = scanner.nextLine();
 
             MulticastSender sender = new MulticastSender(multicastAddress, port);
-            
-            // Lancer l'envoi du fichier dans un autre thread
-            new Thread(() -> sender.sendFile(filePath)).start();
+
+            // Lancer l'envoi du fichier
+            sender.sendFile(filePath);
         }
 
         scanner.close();

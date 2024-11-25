@@ -33,15 +33,27 @@ public class MulticastSender {
 
             System.out.println("Envoi du fichier : " + file.getName());
 
-            // Lire le fichier et envoyer son contenu en fragments de 1024 octets
+            // Envoyer le nom du fichier avant son contenu
+            String fileName = file.getName();
+            byte[] fileNameBytes = fileName.getBytes();
+            DatagramPacket namePacket = new DatagramPacket(fileNameBytes, fileNameBytes.length, group, port);
+            socket.send(namePacket);
+
+            // Lire le fichier et envoyer son contenu en fragments
             while ((bytesRead = fis.read(buffer)) != -1) {
                 DatagramPacket packet = new DatagramPacket(buffer, bytesRead, group, port);
                 socket.send(packet);
                 System.out.println("Envoi d'un paquet de " + bytesRead + " octets.");
             }
 
+            // Indiquer la fin du fichier
+            byte[] endSignal = "END".getBytes();
+            DatagramPacket endPacket = new DatagramPacket(endSignal, endSignal.length, group, port);
+            socket.send(endPacket);
+
             System.out.println("Fichier envoyé en multicast avec succès !");
         } catch (IOException e) {
+            System.err.println("Erreur lors de l'envoi du fichier : " + e.getMessage());
             e.printStackTrace();
         }
     }
